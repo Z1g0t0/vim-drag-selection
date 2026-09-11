@@ -47,13 +47,13 @@ function! ToggleDragMode()
                             l:k_blank_up, l:k_blank_down, l:k_top_file, l:k_bottom_file \
                             l:k_exit ]
         
-        echo "-- DRAG MODE ON --"
+        echo " <-DRAG-MODE-ON-> "
     else
         let b:drag_active = 0
         for k in b:drag_keys
             silent! exec 'xunmap <buffer>' k
         endfor
-        echo "-- DRAG MODE OFF --"
+        echo " x-DRAG-MODE-OFF-x "
     endif
 endfunction
 
