@@ -8,28 +8,59 @@ function! ToggleDragMode()
         let b:drag_active = 0
     endif
 
+    " Fetch keybinds from user config, or use defaults
+    let l:k_down_one    = get(g:, 'down_one',       'j')
+    let l:k_up_one      = get(g:, 'up_one',         'k')
+    let l:k_down_lot    = get(g:, 'down_lot',       'J')
+    let l:k_up_lot      = get(g:, 'up_lot',         'K')
+    let l:k_dedent      = get(g:, 'dedent',         'h')
+    let l:k_indent      = get(g:, 'indent',         'l')
+    let l:k_top_page    = get(g:, 'top_page',       'H')
+    let l:k_bottom_page = get(g:, 'bottom_page',    'L')
+    let l:k_top_file    = get(g:, 'top_file',       'gg')
+    let l:k_bottom_file = get(g:, 'bottom_file',    'G')
+    let l:k_blank_up    = get(g:, 'blank_up',       '{')
+    let l:k_blank_down  = get(g:, 'blank_down',     '}')
+    let l:k_exit        = get(g:, 'exit',           '<Esc>')
+
     if b:drag_active == 0
         let b:drag_active = 1
-        xnoremap <buffer> <silent> j :m '>+1<CR>gvgv
-        xnoremap <buffer> <silent> k :m '<-2<CR>gvgv
-        xnoremap <buffer> <silent> J :m '>+10<CR>gvgv
-        xnoremap <buffer> <silent> K :m '<-11<CR>gvgv
-        xnoremap <buffer> <silent> gg :m 0<CR>gvgv
-        xnoremap <buffer> <silent> G :m $<CR>gvgv
-        xnoremap <buffer> <silent> h <gv
-        xnoremap <buffer> <silent> { :m '{-1<CR>gvgv
-        xnoremap <buffer> <silent> } :m '}<CR>gvgv
-        xnoremap <buffer> <silent> l >gv
-        xnoremap <buffer> <silent> <Esc> <Cmd>call ToggleDragMode()<CR><Esc>
+        
+        " Dynamically execute mappings using the variables
+        exe 'xnoremap <buffer> <silent> ' . l:k_down_one    . ' :m ''>+1<CR>gvgv'
+        exe 'xnoremap <buffer> <silent> ' . l:k_up_one      . ' :m ''<-2<CR>gvgv'
+        exe 'xnoremap <buffer> <silent> ' . l:k_down_lot    . ' :m ''>+10<CR>gvgv'
+        exe 'xnoremap <buffer> <silent> ' . l:k_up_lot      . ' :m ''<-11<CR>gvgv'
+        exe 'xnoremap <buffer> <silent> ' . l:k_dedent      . ' <gv'
+        exe 'xnoremap <buffer> <silent> ' . l:k_indent      . ' >gv'
+        exe 'xnoremap <buffer> <silent> ' . l:k_top_page    . ' :m <C-R>=line("w0")-1<CR><CR>gvgv'
+        exe 'xnoremap <buffer> <silent> ' . l:k_bottom_page . ' :m <C-R>=line("w$")<CR><CR>gvgv'
+        exe 'xnoremap <buffer> <silent> ' . l:k_blank_up    . ' :m ''{-1<CR>gvgv'
+        exe 'xnoremap <buffer> <silent> ' . l:k_blank_down  . ' :m ''}<CR>gvgv'
+        exe 'xnoremap <buffer> <silent> ' . l:k_top_file    . ' :m 0<CR>gvgv'
+        exe 'xnoremap <buffer> <silent> ' . l:k_bottom_file . ' :m $<CR>gvgv'
+        exe 'xnoremap <buffer> <silent> ' . l:k_exit        . ' <Cmd>call ToggleDragMode()<CR><Esc>'
+        
+        " Store mapped keys so we unmap the correct ones later
+        let b:drag_keys = [ l:k_down_one, l:k_up_one, l:k_down_lot, l:k_up_lot,         \
+                            l:k_dedent, l:k_indent, l:k_top_page, l:k_bottom_page,      \
+                            l:k_blank_up, l:k_blank_down, l:k_top_file, l:k_bottom_file \
+                            l:k_exit ]
+        
         echo "-- DRAG MODE ON --"
     else
         let b:drag_active = 0
-        " Changed nunmap to xunmap to match xnoremap
-        for k in ['h','j','k','l','H','J','K','L','gg','G','{','}','<Esc>']
+        for k in b:drag_keys
             silent! exec 'xunmap <buffer>' k
         endfor
         echo "-- DRAG MODE OFF --"
     endif
 endfunction
 
-xnoremap <silent> <leader>v <Cmd>call ToggleDragMode()<CR>
+" The main toggle trigger
+xnoremap <silent> <Plug>(ToggleDragMode) <Cmd>call ToggleDragMode()<CR>
+
+" Apply default toggle mapping unless disabled
+if !get(g:, 'drag_selection_disable_defaults', 0)
+    xmap <leader>v <Plug>(ToggleDragMode)
+endif
