@@ -42,10 +42,7 @@ function! ToggleDragMode()
         exe 'xnoremap <buffer> <silent> ' . l:k_exit        . ' <Cmd>call ToggleDragMode()<CR><Esc>'
         
         " Store mapped keys so we unmap the correct ones later
-        let b:drag_keys = [ l:k_down_one, l:k_up_one, l:k_down_lot, l:k_up_lot,
-                            l:k_dedent, l:k_indent, l:k_top_page, l:k_bottom_page,
-                            l:k_blank_up, l:k_blank_down, l:k_top_file, l:k_bottom_file,
-                            l:k_exit ]
+        let b:drag_keys = [ l:k_down_one, l:k_up_one, l:k_down_lot, l:k_up_lot, l:k_dedent, l:k_indent, l:k_top_page, l:k_bottom_page, l:k_blank_up, l:k_blank_down, l:k_top_file, l:k_bottom_file, l:k_exit ]
         
         echo " <-DRAG-MODE-ON-> "
     else
