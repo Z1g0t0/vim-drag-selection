@@ -27,8 +27,8 @@ function! ToggleDragMode()
         let b:drag_active = 1
         
         " Dynamically execute mappings using the variables
-        exe 'xnoremap <buffer> <silent> ' . l:k_down_one    . ' :m ''>+1<CR>gvgv'
-        exe 'xnoremap <buffer> <silent> ' . l:k_up_one      . ' :m ''<-2<CR>gvgv'
+        exe 'xnoremap <buffer> <silent> ' . l:k_down_one    . ' :<C-u>silent! undojoin <Bar> ''<,''>m ''>+1<CR>gvgv'
+        exe 'xnoremap <buffer> <silent> ' . l:k_up_one      . ' :<C-u>silent! undojoin <Bar> ''<,''>m ''<-2<CR>gvgv'
         exe 'xnoremap <buffer> <silent> ' . l:k_down_lot    . ' :m ''>+10<CR>gvgv'
         exe 'xnoremap <buffer> <silent> ' . l:k_up_lot      . ' :m ''<-11<CR>gvgv'
         exe 'xnoremap <buffer> <silent> ' . l:k_dedent      . ' <gv'
