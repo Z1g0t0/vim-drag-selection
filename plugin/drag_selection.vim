@@ -40,17 +40,20 @@ function! ToggleDragMode()
         exe 'xnoremap <buffer> <silent> ' . l:k_top_file    . ' :m 0<CR>gvgv'
         exe 'xnoremap <buffer> <silent> ' . l:k_bottom_file . ' :m $<CR>gvgv'
         exe 'xnoremap <buffer> <silent> ' . l:k_exit        . ' <Cmd>call ToggleDragMode()<CR><Esc>'
+        " <C-c> also leaves Visual mode without going through k_exit, which
+        " would leave Drag Mode armed. Map it to the same forced toggle.
+        exe 'xnoremap <buffer> <silent> <C-c> <Cmd>call ToggleDragMode()<CR><C-c>'
         
         " Store mapped keys so we unmap the correct ones later
-        let b:drag_keys = [l:k_down_one, l:k_up_one, l:k_down_lot, l:k_up_lot, l:k_dedent, l:k_indent, l:k_top_page, l:k_bottom_page, l:k_blank_up, l:k_blank_down, l:k_top_file, l:k_bottom_file, l:k_exit]
+        let b:drag_keys = [l:k_down_one, l:k_up_one, l:k_down_lot, l:k_up_lot, l:k_dedent, l:k_indent, l:k_top_page, l:k_bottom_page, l:k_blank_up, l:k_blank_down, l:k_top_file, l:k_bottom_file, l:k_exit, '<C-c>']
         
-        echo " <-DRAG-MODE-ON-> "
+        echo " <-DRAG-MODE-> "
     else
         let b:drag_active = 0
         for k in b:drag_keys
             silent! exec 'xunmap <buffer>' k
         endfor
-        echo " x-DRAG-MODE-OFF-x "
+        "echo " x-DRAG-MODE-OFF-x "
     endif
 endfunction
 
@@ -60,4 +63,24 @@ xnoremap <silent> <Plug>(ToggleDragMode) <Cmd>call ToggleDragMode()<CR>
 " Apply default toggle mapping unless disabled
 if !get(g:, 'drag_selection_disable_defaults', 0)
     xmap <leader>v <Plug>(ToggleDragMode)
+endif
+
+" Force-disarm Drag Mode when Visual mode is left by any route we don't map
+" ourselves (mouse click, :command, q:, ...). The check is deferred with a
+" 0-timeout timer on purpose: a drag move (:move + gvgv) briefly leaves and
+" re-enters Visual mode mid-input, and that must not be mistaken for an
+" exit. Timers only run once the input queue drains, so this fires strictly
+" after the move is fully done.
+function! s:AutoDisarm(buf, timer) abort
+    if a:buf == bufnr() && get(b:, 'drag_active', 0)
+                \ && mode() !=# 'v' && mode() !=# 'V' && mode() !=# "\<C-V>"
+        call ToggleDragMode()
+    endif
+endfunction
+
+if exists('##ModeChanged')
+    augroup DragSelection
+        autocmd!
+        autocmd ModeChanged * call timer_start(0, function(expand('<SID>') . 'AutoDisarm', [bufnr()]))
+    augroup END
 endif

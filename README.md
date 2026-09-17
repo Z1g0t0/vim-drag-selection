@@ -33,7 +33,10 @@ use 'Z1g0t0/vim-drag-selection'
     - } : Move selection down a paragraph
     - gg: Move selection to the top of the file
     - G : Move selection to the bottom of the file
- - Press <Esc> or <leader>v to toggle *Drag Mode OFF* .
+ - Press <Esc>, <C-c> or <leader>v to toggle *Drag Mode OFF* .
+ - Drag Mode also disarms itself automatically whenever Visual mode is left
+   by any other route (mouse click, running a : command, ...), so it can
+   never fire a stray movement on the next selection.
 
 ## Configuration
 Bind your preferred keys:
