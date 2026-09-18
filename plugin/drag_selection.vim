@@ -40,14 +40,13 @@ function! ToggleDragMode()
         exe 'xnoremap <buffer> <silent> ' . l:k_top_file    . ' :m 0<CR>gvgv'
         exe 'xnoremap <buffer> <silent> ' . l:k_bottom_file . ' :m $<CR>gvgv'
         exe 'xnoremap <buffer> <silent> ' . l:k_exit        . ' <Cmd>call ToggleDragMode()<CR><Esc>'
-        " <C-c> also leaves Visual mode without going through k_exit, which
-        " would leave Drag Mode armed. Map it to the same forced toggle.
+        " <C-c> also leaves Visual mode without going through k_exit, which would leave Drag Mode armed.
         exe 'xnoremap <buffer> <silent> <C-c> <Cmd>call ToggleDragMode()<CR><C-c>'
         
         " Store mapped keys so we unmap the correct ones later
         let b:drag_keys = [l:k_down_one, l:k_up_one, l:k_down_lot, l:k_up_lot, l:k_dedent, l:k_indent, l:k_top_page, l:k_bottom_page, l:k_blank_up, l:k_blank_down, l:k_top_file, l:k_bottom_file, l:k_exit, '<C-c>']
         
-        echo " <-DRAG-MODE-> "
+        "echo " <-DRAG-MODE-> "
     else
         let b:drag_active = 0
         for k in b:drag_keys
