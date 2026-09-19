@@ -25,8 +25,8 @@ use 'Z1g0t0/vim-drag-selection'
     - J : Move selection down half a page.
     - k : Move selection up.
     - K : Move selection up half a page.
-    - h : Dedent block(<).
-    - l : Indent block(>).
+    - h : Dedent block(>).
+    - l : Indent block(<).
     - H : Move selection to the top of the page.
     - L : Move slection to the bottom of the page.
     - { : Move selection up a paragraph
@@ -45,7 +45,7 @@ init.vim
 ```
 " Change the toggle key mapping
 let g:drag_selection_disable_defaults = 1
-xmap <leader>d <Plug>(ToggleDragMode)
+vnoremap <silent>v <Plug>(ToggleDragMode)   "v in visual mode, personally prefer this.
 
 " Change internal movement keys
 let g:down_one      = 'j'
@@ -68,7 +68,7 @@ init.lua
 ```
 -- Change the toggle key mapping
 vim.g.drag_selection_disable_defaults = 1
-vim.keymap.set('x', '<leader>d', '<Plug>(ToggleDragMode)')
+vim.keymap.set('v', 'v', '<Plug>(ToggleDragMode)')
 
 -- Change internal movement keys
 vim.g.down_one      = 'j'
