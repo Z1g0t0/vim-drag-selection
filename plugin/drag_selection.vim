@@ -45,8 +45,6 @@ function! ToggleDragMode()
 
     let l:k_start_line  = get(g:, 'start_line',     '0')
     let l:k_end_line    = get(g:, 'end_line',       '$')
-    let l:k_block_left  = get(g:, 'block_left',     'h')
-    let l:k_block_right = get(g:, 'block_right',    'l')
 
     let l:k_exit        = get(g:, 'exit',           '<Esc>')
 
@@ -78,11 +76,8 @@ function! ToggleDragMode()
         endif
 
         " 6. Left / Right Indent and Block Shifts (h / l / < / >)
-        exe 'xnoremap <buffer> <silent> ' . l:k_dedent . ' <gv'
-        exe 'xnoremap <buffer> <silent> ' . l:k_indent . ' >gv'
-        exe 'xnoremap <buffer> <expr> <silent> ' . l:k_block_left  . ' "dhP`[" . mode() . "`]"'
-        exe 'xnoremap <buffer> <expr> <silent> ' . l:k_block_right . ' "dp`[" . mode() . "`]"'
-
+        exe 'xnoremap <buffer> <expr> <silent> ' . l:k_dedent . ' mode() ==# "\<C-V>" ? "dhP`[\<C-V>`]" : "<gv"'
+        exe 'xnoremap <buffer> <expr> <silent> ' . l:k_indent . ' mode() ==# "\<C-V>" ? "dp`[\<C-V>`]" : ">gv"'
         " 7. Line Alignments / Block Edge Moves (H / L or 0 / $)
         exe 'xnoremap <buffer> <expr> <silent> ' . l:k_start_line . ' mode() ==# "\<C-V>" ? "d0P`[\<C-V>`]" : ":\<C-u>silent! ''<,''>left\<CR>gv"'
         exe 'xnoremap <buffer> <expr> <silent> ' . l:k_end_line   . ' mode() ==# "\<C-V>" ? "d$p`[\<C-V>`]" : ":\<C-u>call <SID>AlignRight()\<CR>"'
@@ -92,9 +87,13 @@ function! ToggleDragMode()
         exe 'xnoremap <buffer> <silent> <C-c> <Cmd>call ToggleDragMode()<CR><C-c>'
 
         let b:drag_keys = [
-                    \ l:k_down_one, l:k_up_one, l:k_down_lot, l:k_up_lot, l:k_dedent, l:k_indent, 
-                    \ l:k_top_page, l:k_bottom_page, l:k_blank_up, l:k_blank_down, l:k_top_file, 
-                    \ l:k_bottom_file, l:k_start_line, l:k_end_line, l:k_block_left, l:k_block_right, 
+                    \ l:k_down_one, l:k_up_one, 
+                    \ l:k_down_lot, l:k_up_lot, 
+                    \ l:k_dedent, l:k_indent, 
+                    \ l:k_top_page, l:k_bottom_page, 
+                    \ l:k_blank_up, l:k_blank_down, 
+                    \ l:k_top_file, l:k_bottom_file, 
+                    \ l:k_start_line, l:k_end_line,
                     \ l:k_exit, '<C-c>'
                     \ ]
     else
