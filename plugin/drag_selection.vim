@@ -3,12 +3,35 @@ if exists('g:loaded_drag_selection')
 endif
 let g:loaded_drag_selection = 1
 
+" Helper function for right-aligning selected lines (Case 2)
+function! s:AlignRight() abort
+    let l:start = line("'<")
+    let l:end = line("'>")
+    let l:max_len = 0
+
+    " Find the max line length (ignoring trailing whitespace)
+    for l:lnum in range(l:start, l:end)
+        let l:clean = substitute(getline(l:lnum), '\s\+$', '', '')
+        let l:len = strdisplaywidth(l:clean)
+        if l:len > l:max_len
+            let l:max_len = l:len
+        endif
+    endfor
+
+    " Right align the lines based on the longest line
+    if l:max_len > 0
+        execute "'<,'>right " . l:max_len
+    endif
+
+    " Reselect the visual area
+    normal! gv
+endfunction
+
 function! ToggleDragMode()
     if !exists('b:drag_active')
         let b:drag_active = 0
     endif
 
-    " 1. Line-based keys
     let l:k_down_one    = get(g:, 'down_one',       'j')
     let l:k_up_one      = get(g:, 'up_one',         'k')
     let l:k_down_lot    = get(g:, 'down_lot',       'J')
@@ -22,7 +45,6 @@ function! ToggleDragMode()
     let l:k_top_file    = get(g:, 'top_file',       'gg')
     let l:k_bottom_file = get(g:, 'bottom_file',    'G')
 
-    " 2. NEW: Start/End of line and Visual Block (Inline) keys
     let l:k_start_line  = get(g:, 'start_line',     '0')
     let l:k_end_line    = get(g:, 'end_line',       '$')
     let l:k_block_left  = get(g:, 'block_left',     'h')
@@ -49,18 +71,19 @@ function! ToggleDragMode()
         exe 'xnoremap <buffer> <silent> ' . l:k_top_file    . ' :m 0<CR>gvgv'
         exe 'xnoremap <buffer> <silent> ' . l:k_bottom_file . ' :m $<CR>gvgv'
 
-        " Inline / Visual Block moves (Cut, Move, Paste, Reselect)
-        exe 'xnoremap <buffer> <expr> <silent> ' . l:k_start_line  . ' "d0P`[" . visualmode() . "`]"'
-        exe 'xnoremap <buffer> <expr> <silent> ' . l:k_end_line    . ' "d$p`[" . visualmode() . "`]"'
-        exe 'xnoremap <buffer> <expr> <silent> ' . l:k_block_left  . ' "dhP`[" . visualmode() . "`]"'
-        exe 'xnoremap <buffer> <expr> <silent> ' . l:k_block_right . ' "dp`[" . visualmode() . "`]"'
-        exe 'xnoremap <buffer> <expr> <silent> ' . l:k_block_up    . ' "dkP`[" . visualmode() . "`]"'
-        exe 'xnoremap <buffer> <expr> <silent> ' . l:k_block_down  . ' "djP`[" . visualmode() . "`]"'
+        " 0 and $ Logic: Align in v/V mode, Block move in <C-v> mode
+        exe 'xnoremap <buffer> <expr> <silent> ' . l:k_start_line  . ' mode() ==# "\<C-V>" ? "d0P`[\<C-V>`]" : ":\<C-u>silent! ''<,''>left\<CR>gv"'
+        exe 'xnoremap <buffer> <expr> <silent> ' . l:k_end_line    . ' mode() ==# "\<C-V>" ? "d$p`[\<C-V>`]" : ":\<C-u>call <SID>AlignRight()\<CR>"'
+
+        " Inline / Visual Block moves
+        exe 'xnoremap <buffer> <expr> <silent> ' . l:k_block_left  . ' "dhP`[" . mode() . "`]"'
+        exe 'xnoremap <buffer> <expr> <silent> ' . l:k_block_right . ' "dp`[" . mode() . "`]"'
+        exe 'xnoremap <buffer> <expr> <silent> ' . l:k_block_up    . ' "dkP`[" . mode() . "`]"'
+        exe 'xnoremap <buffer> <expr> <silent> ' . l:k_block_down  . ' "djP`[" . mode() . "`]"'
 
         exe 'xnoremap <buffer> <silent> ' . l:k_exit        . ' <Cmd>call ToggleDragMode()<CR><Esc>'
         exe 'xnoremap <buffer> <silent> <C-c> <Cmd>call ToggleDragMode()<CR><C-c>'
 
-        " Store mapped keys for exact unmapping
         let b:drag_keys = [
                     \ l:k_down_one, l:k_up_one, l:k_down_lot, l:k_up_lot, l:k_dedent, l:k_indent, 
                     \ l:k_top_page, l:k_bottom_page, l:k_blank_up, l:k_blank_down, l:k_top_file, 
