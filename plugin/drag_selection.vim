@@ -1,6 +1,3 @@
-if exists('g:loaded_drag_selection')
-    finish
-endif
 let g:loaded_drag_selection = 1
 
 " Helper function for right-aligning selected lines (0 / $ logic in v/V mode)
