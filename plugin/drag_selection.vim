@@ -119,10 +119,8 @@ function! s:InitDragSelection() abort
     endif
 endfunction
 
-augroup DragSelectionEnter
-    autocmd!
-    autocmd VimEnter * call s:InitDragSelection()
-augroup END
+call s:InitDragSelection()
+xnoremap <silent> <Plug>(ToggleDragMode) <Cmd>call ToggleDragMode()<CR>
 
 function! s:AutoDisarm(buf, timer) abort
     if a:buf == bufnr() && get(b:, 'drag_active', 0)
