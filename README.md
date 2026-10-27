@@ -1,6 +1,6 @@
 # vim-drag-selection
 
-Simple visual mode selection dragging.
+Visual mode selection drag with vim-like navigation keys(configurable).
 
 ## Installation
 
@@ -57,51 +57,41 @@ Bind your preferred keys:
 
 init.vim
 ```
-" Change the toggle key mapping
-let g:drag_selection_disable_defaults = 1
-vnoremap <silent>v <Plug>(ToggleDragMode)   "v in visual mode, personally prefer this.
-
-" Change internal movement keys
-let g:down_one      = 'j'
-let g:up_one        = 'k'
-let g:down_lot      = 'J'
-let g:up_lot        = 'K'
-let g:dedent        = 'h'
-let g:indent        = 'l'
-let g:start_line    = '0'
-let g:end_line      = '$'
-let g:top_page      = 'H'
-let g:bottom_page   = 'L'
-let g:top_file      = 'gg'
-let g:bottom_file   = 'G'
-let g:blank_up      = '{'
-let g:blank_down    = '}'
-let g:exit          = '<Esc>'
+let g:drag_selection = '<leader>d'
+let g:down_one       = 'j'
+let g:up_one         = 'k'
+let g:down_lot       = 'J'
+let g:up_lot         = 'K'
+let g:dedent         = 'h'
+let g:indent         = 'l'
+let g:start_line     = '0'
+let g:end_line       = '$'
+let g:top_page       = 'H'
+let g:bottom_page    = 'L'
+let g:top_file       = 'gg'
+let g:bottom_file    = 'G'
+let g:blank_up       = '{'
+let g:blank_down     = '}'
+let g:exit           = '<Esc>'
 ```
 or
 
 init.lua
 ```
--- Disable the default <leader>v toggle
-vim.g.drag_selection_disable_defaults = 1
-
--- Map the toggle to 'v' in visual mode(uses 'x' for correct recursive mapping)
-vim.keymap.set('x', 'v', '<Plug>(ToggleDragMode)', { silent = true })
-
--- Change internal movement keys
-vim.g.down_one      = 'j'
-vim.g.up_one        = 'k'
-vim.g.down_lot      = 'J'
-vim.g.up_lot        = 'K'
-vim.g.dedent        = 'h'
-vim.g.indent        = 'l'
-vim.g.start_line    = '0'
-vim.g.end_line      = '$'
-vim.g.top_page      = 'H'
-vim.g.bottom_page   = 'L'
-vim.g.top_file      = 'gg'
-vim.g.bottom_file   = 'G'
-vim.g.blank_up      = '{'
-vim.g.blank_down    = '}'
-vim.g.exit          = '<Esc>'
+vim.g.drag_selection = 'j'
+vim.g.down_one       = 'j'
+vim.g.up_one         = 'k'
+vim.g.down_lot       = 'J'
+vim.g.up_lot         = 'K'
+vim.g.dedent         = 'h'
+vim.g.indent         = 'l'
+vim.g.start_line     = '0'
+vim.g.end_line       = '$'
+vim.g.top_page       = 'H'
+vim.g.bottom_page    = 'L'
+vim.g.top_file       = 'gg'
+vim.g.bottom_file    = 'G'
+vim.g.blank_up       = '{'
+vim.g.blank_down     = '}'
+vim.g.exit           = '<Esc>'
 ```

@@ -106,11 +106,23 @@ function! ToggleDragMode()
     endif
 endfunction
 
-xnoremap <silent> <Plug>(ToggleDragMode) <Cmd>call ToggleDragMode()<CR>
+function! s:InitDragSelection() abort
+    let g:drag_selection = get(g:, 'drag_selection', '<leader>v')
+    
+    if exists('g:drag_selection_mapped') && !empty(g:drag_selection_mapped)
+        silent! execute 'xunmap' g:drag_selection_mapped
+    endif
 
-if !get(g:, 'drag_selection_disable_defaults', 0)
-    xmap <leader>v <Plug>(ToggleDragMode)
-endif
+    if !empty(g:drag_selection)
+        execute 'xmap <silent>' g:drag_selection'<Plug>(ToggleDragMode)'
+        let g:drag_selection_mapped = g:drag_selection
+    endif
+endfunction
+
+augroup DragSelectionEnter
+    autocmd!
+    autocmd VimEnter * call s:InitDragSelection()
+augroup END
 
 function! s:AutoDisarm(buf, timer) abort
     if a:buf == bufnr() && get(b:, 'drag_active', 0)
